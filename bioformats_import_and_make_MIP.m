@@ -21,7 +21,7 @@ path_to_folder = {};
 path_to_file = {'/Volumes/whitelab/Lab Members/MirandaHunter/Microscopy/SP5/220411_hmgb2/CRISPR_12wk_1_slide1_tumor488_hmgb2555_40X_zoom.lif'};
 
 save_MIPs = 1; % save MIPs as tif?
-n_channels = 4; % number of channels acquired
+n_channels = 3; % number of channels acquired
 
 
 %% Check if filetype is lif or czi
@@ -120,6 +120,9 @@ if ~isempty(path_to_folder)
                 idx_555 = find(~cellfun(@isempty,(strfind(series_names, 'C=3/4'))));
                 idx_647 = find(~cellfun(@isempty,(strfind(series_names, 'C=4/4'))));
             end
+            if isempty(idx_647)
+                error('Selected number of channels not detected. Check to make sure n_channels is correct.')
+            end
             
             % move the images for each channel into their own stack
             im_stack_405 = series(idx_405,1);
@@ -194,7 +197,7 @@ if ~isempty(path_to_folder)
      pause(3)
      close(f)
 
-% for multiple images stored within a single .czi file
+% for multiple images stored within a single file
 elseif ~isempty(path_to_file)
     
     data = bfopen(path_to_file{1});
@@ -211,9 +214,9 @@ elseif ~isempty(path_to_file)
         
         % waitbar
         if jj == 1
-            f = waitbar((jj-1)/length(n_series), append('Processing image ', string(jj), ' of ', string(length(n_series)), '...'));
+            f = waitbar((jj-1)/n_series, append('Processing image ', string(jj), ' of ', string(n_series), '...'));
         else
-            waitbar((jj-1)/length(n_series), f, append('Processing image ', string(jj), ' of ', string(length(n_series)), '...'));
+            waitbar((jj-1)/n_series, f, append('Processing image ', string(jj), ' of ', string(n_series), '...'));
         end
         
         series = data{jj,1};
@@ -229,6 +232,9 @@ elseif ~isempty(path_to_file)
             idx_488 = find(~cellfun(@isempty,(strfind(series_names, 'C=2/4'))));
             idx_555 = find(~cellfun(@isempty,(strfind(series_names, 'C=3/4'))));
             idx_647 = find(~cellfun(@isempty,(strfind(series_names, 'C=4/4'))));
+        end
+        if isempty(idx_647)
+            error('Selected number of channels not detected. Check to make sure n_channels is correct.')
         end
         
         % move the images for each channel into their own stack
