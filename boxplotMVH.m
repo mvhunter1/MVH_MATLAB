@@ -3,7 +3,7 @@
 % (c) 2022:
 %       Miranda Hunter, White Lab, MSKCC
 %           hunterm@mskcc.org | mirandavhunter@gmail.com
-% 
+%
 % Boxplot function.
 % data_matrix = data you want to plot as matrix with each condition = column.
 % colours = optional, colours for each group.
@@ -53,7 +53,7 @@ for ii = 1:n_conditions
     min_data = mean_data - std(data);
     firstQ = mean_data - std(data)/sqrt(length(data)); % standard error
     thirdQ = mean_data + std(data)/sqrt(length(data)); % standard error
-    
+
     % plot vertical lines
     plot([mean(xrange), mean(xrange)], [thirdQ, max_data], 'k', 'LineWidth', thickness);
     plot([mean(xrange), mean(xrange)], [firstQ, min_data], 'k', 'LineWidth', thickness);
@@ -64,31 +64,6 @@ for ii = 1:n_conditions
     plot([xrange(1), xrange(2)], [thirdQ, thirdQ], 'k', 'LineWidth', thickness);
     plot([xrange(1), xrange(2)], [firstQ, firstQ], 'k', 'LineWidth', thickness);
     plot([xrange(1), xrange(2)], [mean_data, mean_data], 'k', 'LineWidth', thickness);
-
-
-%     data = sort(data);
-%     meanData = mean(data);
-%     sDev = std(data);
-%     sErr = std(data)/sqrt(length(data));
-%     maxData = meanData+sDev;
-%     minData = meanData-sDev;
-%     firstQ=meanData-sErr;
-%     thirdQ=meanData+sErr;
-%     x1=xrange(1); % left boundary of box
-%     x2=mean(xrange); % center of box
-%     x3=xrange(2); % right boundary of box
-% 
-%     %plot vertical Lines
-%     plot([x2,x2],[thirdQ,maxData],'k','LineWidth',thickness);
-%     plot([x2,x2],[firstQ,minData],'k','LineWidth',thickness);
-%     plot([x1,x1],[firstQ,thirdQ],'k','LineWidth',thickness);
-%     plot([x3,x3],[firstQ,thirdQ],'k','LineWidth',thickness);
-% 
-%     %plot horizontal Lines
-%     plot([x1,x3],[thirdQ,thirdQ],'k','LineWidth',thickness);
-%     plot([x1,x3],[firstQ,firstQ],'k','LineWidth',thickness);
-%     % plot([x1,x3],[medianData,medianData],'k','LineWidth',thickness);
-%     plot([x1,x3],[meanData,meanData],'k','LineWidth',thickness);
 
 end
 set(gca, 'Box', 'off', 'FontSize', 26, 'LineWidth', 3);
