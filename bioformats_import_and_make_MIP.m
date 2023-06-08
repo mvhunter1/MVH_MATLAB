@@ -14,14 +14,17 @@
 clear all
 close all
 
-% if multiple images are saved in a folder (leave empty otherwise):
-path_to_folder = {};
-
-% if multiple images are stored within 1 file (leave empty otherwise):
-path_to_file = {'/Volumes/whitelab/Lab Members/MirandaHunter/Microscopy/SP5/220411_hmgb2/CRISPR_12wk_1_slide1_tumor488_hmgb2555_40X_zoom.lif'};
+% if multiple images are saved in a folder (leave empty otherwise) i.e 880:
+path_to_folder = {'/Volumes/whitelab/Lab Members/MirandaHunter/Microscopy/LSM880/230605_confinement_fixed_drugs/'};
+% if multiple images are stored within 1 file (leave empty otherwise) i.e SP5:
+path_to_file = {};
 
 save_MIPs = 1; % save MIPs as tif?
-n_channels = 3; % number of channels acquired
+n_channels = 4; % number of channels acquired
+
+if ~isempty(path_to_folder) && ~isempty(path_to_file)
+    error('One of path_to_folder or path_to_file must be empty.')
+end
 
 
 %% Check if filetype is lif or czi
@@ -103,6 +106,7 @@ if ~isempty(path_to_folder)
         
         % determine number of images within the series
         [n_series,~] = size(data);
+
         
         for jj = 1:n_series
             
@@ -120,8 +124,9 @@ if ~isempty(path_to_folder)
                 idx_555 = find(~cellfun(@isempty,(strfind(series_names, 'C=3/4'))));
                 idx_647 = find(~cellfun(@isempty,(strfind(series_names, 'C=4/4'))));
             end
-            if isempty(idx_647)
-                error('Selected number of channels not detected. Check to make sure n_channels is correct.')
+            if isempty(idx_405) % if n_channels is wrong, skip to next image.
+                fprintf(append('Selected number of channels not detected for image ', folder_files{jj}, '. Check to make sure n_channels is correct. Skipping to next image...\n'))
+                continue
             end
             
             % move the images for each channel into their own stack
@@ -147,9 +152,9 @@ if ~isempty(path_to_folder)
             
             if show_ims
                 figure;
-                subplot(1,3,1); imagesc(mip_405); axis off
-                subplot(1,3,2); imagesc(mip_488); axis off
-                subplot(1,3,3); imagesc(mip_555); axis off
+                subplot(1,3,1); imshow(imadjust((mip_405))); axis off
+                subplot(1,3,2); imshow(imadjust((mip_488))); axis off
+                subplot(1,3,3); imshow(imadjust((mip_555))); axis off
             end
             
             if n_channels == 3 || n_channels == 4
@@ -190,7 +195,6 @@ if ~isempty(path_to_folder)
             if n_channels == 4
                 imwrite(mip_647, append('max_', im_name, '_647.tiff'));
             end
-            
         end
     end
      waitbar(1, f, 'Done!');
@@ -233,7 +237,7 @@ elseif ~isempty(path_to_file)
             idx_555 = find(~cellfun(@isempty,(strfind(series_names, 'C=3/4'))));
             idx_647 = find(~cellfun(@isempty,(strfind(series_names, 'C=4/4'))));
         end
-        if isempty(idx_647)
+        if exist('idx_647') && isempty(idx_647)
             error('Selected number of channels not detected. Check to make sure n_channels is correct.')
         end
         
@@ -296,3 +300,4 @@ elseif ~isempty(path_to_file)
     close(f)
 end
 
+clear all
